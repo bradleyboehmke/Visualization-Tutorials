@@ -1,13 +1,6 @@
----
-title: "Intro to ggplot2"
-output:
-  html_document:
-    keep_md: true
----
+# Intro to ggplot2
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, collapse = TRUE, message = FALSE, warning = FALSE)
-```
+
 
 Being able to create __*visualizations*__ (graphical representations) of data is a key step in being able to communicate information and findings to others. In this module you will learn to use the __*`ggplot2`*__ library to declaratively make beautiful plots or charts of your data. Although R does provide built-in plotting functions, the `ggplot2` library implements the [Grammar of Graphics](https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448/ref=sr_1_fkmr0_1?ie=UTF8&qid=1493924426&sr=8-1-fkmr0&keywords=grammar+of+graphics+ggplot). This makes it particularly effective for describing how visualizations should represent data, and has turned it into the preeminent plotting library in R. Learning this library will allow you to make nearly any kind of (static) data visualization, customized to your exact specifications.
 
@@ -35,10 +28,25 @@ This tutorial will provide a general introduction to the ggplot syntax.[^adapted
 
 To reproduce the code throughout this tutorial you will need to load the `ggplot2` package. Note that `ggplot2` also comes with a number of built-in data sets. This tutorial will use the provided `mpg` data set as an example, which is a data frame that contains information about fuel economy for different cars.
 
-```{r}
+
+```r
 library(ggplot2)
 
 mpg
+## # A tibble: 234 × 11
+##    manufacturer      model displ  year   cyl      trans   drv   cty   hwy
+##           <chr>      <chr> <dbl> <int> <int>      <chr> <chr> <int> <int>
+## 1          audi         a4   1.8  1999     4   auto(l5)     f    18    29
+## 2          audi         a4   1.8  1999     4 manual(m5)     f    21    29
+## 3          audi         a4   2.0  2008     4 manual(m6)     f    20    31
+## 4          audi         a4   2.0  2008     4   auto(av)     f    21    30
+## 5          audi         a4   2.8  1999     6   auto(l5)     f    16    26
+## 6          audi         a4   2.8  1999     6 manual(m5)     f    18    26
+## 7          audi         a4   3.1  2008     6   auto(av)     f    18    27
+## 8          audi a4 quattro   1.8  1999     4 manual(m5)     4    18    26
+## 9          audi a4 quattro   1.8  1999     4   auto(l5)     4    16    25
+## 10         audi a4 quattro   2.0  2008     4 manual(m6)     4    20    28
+## # ... with 224 more rows, and 2 more variables: fl <chr>, class <chr>
 ```
 
 
@@ -67,7 +75,8 @@ In order to create a plot, you:
 2. Specify **aesthetic mappings**, which specifies how you want to map variables to visual aspects. In this case we are simply mapping the  *displ* and *hwy* variables to the x- and y-axes.
 3. You then add new layers that are geometric objects which will show up on the plot. In this case we add `geom_point` to add a layer with *points* (dot) elements as the geometric shapes to represent the data.
 
-```{r, eval=FALSE}
+
+```r
 # create canvas
 ggplot(mpg)
 
@@ -79,22 +88,7 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point()
 ```
 
-```{r, fig.align='center', fig.width=9, fig.height=3, echo=FALSE}
-# create canvas
-p1 <- ggplot(mpg) +
-  ggtitle("Canvas \n")
-
-# variables of interest mapped
-p2 <- ggplot(mpg, aes(x = displ, y = hwy)) +
-  ggtitle("Canvas + variables mapped \nto axes")
-
-# data plotted
-p3 <- ggplot(mpg, aes(x = displ, y = hwy)) +
-  geom_point() +
-  ggtitle("Data plotted \n")
-  
-gridExtra::grid.arrange(p1, p2, p3, nrow = 1)
-```
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-3-1.png" style="display: block; margin: auto;" />
 
 Note that when you added the `geom` layer you used the addition (`+`) operator.  As you add new layers you will always use `+` to add onto your visualization.
 
@@ -104,17 +98,23 @@ The __*aesthetic mappings*__ take properties of the data and use them to influen
 
 All aesthetics for a plot are specified in the [aes()](http://ggplot2.tidyverse.org/reference/index.html#section-aesthetics) function call (later in this tutorial you will see that each `geom` layer can have its own `aes` specification). For example, we can add a mapping from the class of the cars to a *color* characteristic:
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   geom_point()
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-4-1.png" style="display: block; margin: auto;" />
+
 Note that using the `aes()` function will cause the visual channel to be based on the data specified in the argument. For example, using `aes(color = "blue")` won’t cause the geometry’s color to be “blue”, but will instead cause the visual channel to be mapped from the vector `c("blue")` — as if we only had a single type of engine that happened to be called “blue”. If you wish to apply an aesthetic property to an entire geometry, you can set that property as an argument to the `geom` method, outside of the `aes()` call:
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(color = "blue")
 ```
+
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-5-1.png" style="display: block; margin: auto;" />
 
 ## Specifying Geometric Shapes {#geo}
 
@@ -134,7 +134,8 @@ Each of these geometries will leverage the aesthetic mappings supplied although 
 
 Almost all `geoms` require an `x` and `y` mapping at the bare minimum.
 
-```{r, eval=FALSE}
+
+```r
 # Left column: x and y mapping needed!
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point()
@@ -150,49 +151,37 @@ ggplot(data = mpg, aes(x = hwy)) +
   geom_histogram() 
 ```
 
-```{r, fig.align='center', fig.width=9, fig.height=6, echo=FALSE}
-
-p1 <- ggplot(mpg, aes(x = displ, y = hwy)) +
-  geom_point() +
-  ggtitle("x and y mapping needed!")
-
-
-p2 <- ggplot(mpg, aes(x = displ, y = hwy)) +
-  geom_smooth()
-
-
-p3 <- ggplot(data = mpg, aes(x = class)) +
-  geom_bar() +
-  ggtitle("no y mapping needed!")
-
-p4 <- ggplot(data = mpg, aes(x = hwy)) +
-  geom_histogram()
-  
-gridExtra::grid.arrange(p1, p3, p2, p4, nrow = 2)
-```
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-7-1.png" style="display: block; margin: auto;" />
 
 What makes this really powerful is that you can add __*multiple*__ geometries to a plot, thus allowing you to create complex graphics showing multiple aspects of your data.
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 # plot with both points and smoothed line
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point() +
   geom_smooth()
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+
 Of course the aesthetics for each `geom` can be different, so you could show multiple lines on the same plot (or with different colors, styles, etc). It’s also possible to give each `geom` a different data argument, so that you can show multiple data sets in the same plot.
 
 For example, we can plot both points and a smoothed line for the same `x` and `y` variable but specify unique colors within each `geom`:
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point(color = "blue") +
   geom_smooth(color = "red")
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
+
 So as you can see if we specify an aesthetic within `ggplot` it will be passed on to each `geom` that follows.  Or we can specify certain aes within each `geom`, which allows us to only show certain characteristics for that specificy layer (i.e. `geom_point`).
 
-```{r eval=FALSE}
+
+```r
 # color aesthetic passed to each geom layer
 ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   geom_point() +
@@ -204,64 +193,76 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_smooth(se = FALSE)
 ```
 
-```{r fig.align='center', fig.width=9, fig.height=3, echo=FALSE}
-# color aesthetic passed to each geom layer
-p1 <- ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
-  geom_point() +
-  geom_smooth(se = FALSE)
-
-# color aesthetic specified for only the geom_point layer
-p2 <- ggplot(mpg, aes(x = displ, y = hwy)) +
-  geom_point(aes(color = class)) +
-  geom_smooth(se = FALSE)
-
-gridExtra::grid.arrange(p1, p2, nrow = 1)
-```
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 ### Statistical Transformations
 
 If you look at the below bar chart, you’ll notice that the the y axis was defined for us as the *count* of elements that have the particular type. This count isn’t part of the data set (it’s not a column in mpg), but is instead a __*statistical transformation*__ that the `geom_bar` automatically applies to the data. In particular, it applies the `stat_count` transformation.
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 ggplot(mpg, aes(x = class)) +
   geom_bar()
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-12-1.png" style="display: block; margin: auto;" />
+
 `ggplot2` supports many different statistical transformations. For example, the “identity” transformation will leave the data “as is”. You can specify which statistical transformation a `geom` uses by passing it as the `stat` argument.  For example, consider our data already had the count as a variable:
 
-```{r}
+
+```r
 class_count <- dplyr::count(mpg, class)
 class_count
+## # A tibble: 7 × 2
+##        class     n
+##        <chr> <int>
+## 1    2seater     5
+## 2    compact    47
+## 3    midsize    41
+## 4    minivan    11
+## 5     pickup    33
+## 6 subcompact    35
+## 7        suv    62
 ```
 
 We can use `stat = "identity"` within `geom_bar` to plot our bar height values to this variable.  Also, note that we now include *n* for our y variable:
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 ggplot(class_count, aes(x = class, y = n)) +
   geom_bar(stat = "identity")
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-14-1.png" style="display: block; margin: auto;" />
+
 We can also call `stat_` functions directly to add additional layers.  For example, here we create a scatter plot of highway miles for each displacement value and then use `stat_summary` to plot the mean highway miles at each displacement value.
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 ggplot(mpg, aes(displ, hwy)) + 
   geom_point(color = "grey") + 
   stat_summary(fun.y = "mean", geom = "line", size = 1, linetype = "dashed")
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-15-1.png" style="display: block; margin: auto;" />
+
 ### Position Adjustments
 
 In addition to a default statistical transformation, each `geom` also has a default __*position adjustment*__ which specifies a set of “rules” as to how different components should be positioned relative to each other. This position is noticeable in a `geom_bar` if you map a different variable to the color visual characteristic:
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 # bar chart of class, colored by drive (front, rear, 4-wheel)
 ggplot(mpg, aes(x = class, fill = drv)) + 
   geom_bar()
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-16-1.png" style="display: block; margin: auto;" />
+
 The `geom_bar` by default uses a position adjustment of `"stack"`, which makes each rectangle’s height proprotional to its value and stacks them on top of each other. We can use the `position` argument to specify what position adjustment rules to follow: 
 
-```{r eval=FALSE}
+
+```r
 # position = "dodge": values next to each other
 ggplot(mpg, aes(x = class, fill = drv)) + 
   geom_bar(position = "dodge")
@@ -271,19 +272,7 @@ ggplot(mpg, aes(x = class, fill = drv)) +
   geom_bar(position = "fill")
 ```
 
-```{r fig.align='center', fig.width=9, fig.height=3, echo=FALSE}
-# position = "dodge": values next to each other
-p1 <- ggplot(mpg, aes(x = class, fill = drv)) + 
-  geom_bar(position = "dodge") +
-  ggtitle("position = 'dodge'")
-
-# position = "fill": percentage chart
-p2 <- ggplot(mpg, aes(x = class, fill = drv)) + 
-  geom_bar(position = "fill") +
-  ggtitle("position = 'fill'")
-
-gridExtra::grid.arrange(p1, p2, nrow = 1)
-```
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-18-1.png" style="display: block; margin: auto;" />
 
 Check the documentation for each particular geom to learn more about its positioning adjustments.
 
@@ -292,7 +281,8 @@ Check the documentation for each particular geom to learn more about its positio
 
 Whenever you specify an aesthetic mapping, `ggplot` uses a particular __*scale*__ to determine the range of values that the data should map to. Thus when you specify
 
-```{r eval=FALSE}
+
+```r
 # color the data by engine type
 ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   geom_point()
@@ -300,7 +290,8 @@ ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
 
 `ggplot` automatically adds a scale for each mapping to the plot:
 
-```{r eval=FALSE}
+
+```r
 # same as above, with explicit scales
 ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   geom_point() +
@@ -313,7 +304,8 @@ Each scale can be represented by a function with the following name: `scale_`, f
 
 While the default scales will work fine, it is possible to explicitly add different scales to replace the defaults. For example, you can use a scale to change the direction of an axis:
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 # milage relationship, ordered in reverse
 ggplot(mpg, aes(x = cty, y = hwy)) +
   geom_point() +
@@ -321,18 +313,24 @@ ggplot(mpg, aes(x = cty, y = hwy)) +
   scale_y_reverse()
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-21-1.png" style="display: block; margin: auto;" />
+
 Similarly, you can use `scale_x_log10()` and `scale_x_sqrt()` to transform your scale. You can also use `scales` to format your axes:
 
-```{r fig.align='center', fig.width=6, fig.height=3}
+
+```r
 ggplot(mpg, aes(x = class, fill = drv)) + 
   geom_bar(position = "fill") +
   scale_y_continuous(breaks = seq(0, 1, by = .2), labels = scales::percent)
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-22-1.png" style="display: block; margin: auto;" />
+
 
 A common parameter to change is which set of colors to use in a plot. While you can use the default coloring, a more common option is to leverage the pre-defined palettes from [colorbrewer.org](http://colorbrewer2.org/). These color sets have been carefully designed to look good and to be viewable to people with certain forms of color blindness. We can leverage color brewer palletes by specifying the `scale_color_brewer()` function, passing the pallete as an argument.
 
-```{r eval=FALSE}
+
+```r
 # default color brewer
 ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   geom_point() +
@@ -344,19 +342,7 @@ ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   scale_color_brewer(palette = "Set3")
 ```
 
-```{r fig.align='center', fig.width=9, fig.height=3, echo=FALSE}
-# default color brewer
-p1 <- ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
-  geom_point() +
-  scale_color_brewer()
-
-# specifying color palette
-p2 <- ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
-  geom_point() +
-  scale_color_brewer(palette = "Set3")
-
-gridExtra::grid.arrange(p1, p2, nrow = 1)
-```
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" />
 
 Note that you can get the palette name from the [colorbrewer website](http://colorbrewer2.org/) by looking at the scheme query parameter in the URL. Or see the diagram [here](https://bl.ocks.org/mbostock/5577023) and hover the mouse over each palette for the name.
 
@@ -372,7 +358,8 @@ The next term from the Grammar of Graphics that can be specified is the __*coord
 - `coord_polar` a plot using [polar coordinates](https://en.wikipedia.org/wiki/Polar_coordinate_system)
 - `coord_quickmap` a coordinate system that approximates a good aspect ratio for maps. See documentation for more details.
 
-```{r, eval=FALSE}
+
+```r
 # zoom in with coord_cartesian
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point() +
@@ -384,38 +371,32 @@ ggplot(mpg, aes(x = class)) +
   coord_flip()
 ```
 
-```{r fig.align='center', fig.width=9, fig.height=3, echo=FALSE}
-# zoom in with coord_cartesian
-p1 <- ggplot(mpg, aes(x = displ, y = hwy)) +
-  geom_point() +
-  coord_cartesian(xlim = c(0, 5))
-
-# flip x and y axis with coord_flip
-p2 <- ggplot(mpg, aes(x = class)) +
-  geom_bar() +
-  coord_flip()
-
-gridExtra::grid.arrange(p1, p2, nrow = 1)
-```
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-26-1.png" style="display: block; margin: auto;" />
 
 
 ## Facets {#facets}
 
 __*Facets*__ are ways of grouping a data plot into multiple different pieces (subplots). This allows you to view a separate plot for each value in a categorical variable. You can construct a plot with multiple facets by using the `facet_wrap()` function. This will produce a “row” of subplots, one for each categorical variable (the number of rows can be specified with an additional argument):
 
-```{r fig.align='center', fig.width=9, fig.height=3}
+
+```r
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point() +
   facet_grid(~ class)
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-27-1.png" style="display: block; margin: auto;" />
+
 You can also `facet_grid` to facet your data by more than one categorical variable. Note that we use a tilde (`~`) in our `facet` functions.  With `facet_grid` the variable to the left of the tilde will be represented in the rows and the variable to the right will be represented across the columns. 
 
-```{r fig.align='center', fig.width=9, fig.height=5}
+
+```r
 ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_point() +
   facet_grid(year ~ cyl)
 ```
+
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-28-1.png" style="display: block; margin: auto;" />
 
 ## Labels & Annotations {#labels}
 
@@ -423,7 +404,8 @@ Textual labels and annotations (on the plot, axes, geometry, and legend) are an 
 
 You can add titles and axis labels to a chart using the `labs()` function (not `labels`, which is a different R function!):
 
-```{r fig.align='center', fig.width=7, fig.height=4}
+
+```r
 ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
   geom_point() +
   labs(title = "Fuel Efficiency by Engine Power",
@@ -433,9 +415,12 @@ ggplot(mpg, aes(x = displ, y = hwy, color = class)) +
        color = "Car Type")
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-29-1.png" style="display: block; margin: auto;" />
+
 It is also possible to add labels into the plot itself (e.g., to label each point or line) by adding a new `geom_text` or `geom_label` to the plot; effectively, you’re plotting an extra set of data which happen to be the variable names:
 
-```{r fig.align='center', fig.width=7, fig.height=3}
+
+```r
 library(dplyr)
 
 # a data table of each car that has best efficiency of its type
@@ -448,15 +433,20 @@ ggplot(mpg, aes(x = displ, y = hwy)) +
   geom_label(data = best_in_class, aes(label = model), alpha = 0.5)
 ```
 
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" />
+
 However, note that two labels overlap one-another in the top left part of the plot.  We can use the `geom_text_repel` function from the  [`ggrepel`](https://github.com/slowkow/ggrepel) package to help position labels.
 
-```{r fig.align='center', fig.width=7, fig.height=3}
+
+```r
 library(ggrepel)
 
 ggplot(mpg, aes(x = displ, y = hwy)) + 
   geom_point(aes(color = class)) +
   geom_text_repel(data = best_in_class, aes(label = model))
 ```
+
+<img src="ggplot2-intro_files/figure-html/unnamed-chunk-31-1.png" style="display: block; margin: auto;" />
 
 ## Additional Resources on `ggplot2` {#add}
 
